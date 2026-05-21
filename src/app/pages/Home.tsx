@@ -5,7 +5,8 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
-import { dishOptions, amenityOptions } from '../data/mockData';
+import { amenityOptions } from '../data/mockData';
+import { DishSelector } from '../components/DishSelector';
 import { SearchCriteria } from '../types';
 
 export default function Home() {
@@ -14,12 +15,6 @@ export default function Home() {
   const [budget, setBudget] = useState(150000);
   const [selectedDishes, setSelectedDishes] = useState<string[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-
-  const handleDishToggle = (dish: string) => {
-    setSelectedDishes((prev) =>
-      prev.includes(dish) ? prev.filter((d) => d !== dish) : [...prev, dish]
-    );
-  };
 
   const handleAmenityToggle = (amenity: string) => {
     setSelectedAmenities((prev) =>
@@ -93,23 +88,10 @@ export default function Home() {
               <Utensils className="w-5 h-5 text-orange-500" />
               <span>Món ăn mong muốn (tùy chọn)</span>
             </Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {dishOptions.map((dish) => (
-                <div
-                  key={dish}
-                  className="flex items-center space-x-2 p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDishToggle(dish);
-                  }}
-                >
-                  <Checkbox
-                    checked={selectedDishes.includes(dish)}
-                  />
-                  <label className="cursor-pointer flex-1">{dish}</label>
-                </div>
-              ))}
-            </div>
+            <DishSelector
+              selected={selectedDishes}
+              onChange={setSelectedDishes}
+            />
           </div>
 
           {/* Amenities */}
