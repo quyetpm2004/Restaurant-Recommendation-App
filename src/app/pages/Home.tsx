@@ -1,13 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Search, Users, DollarSign, Utensils, Wifi } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Checkbox } from '../components/ui/checkbox';
-import { amenityOptions } from '../data/mockData';
-import { DishSelector } from '../components/DishSelector';
-import { SearchCriteria } from '../types';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { Search, Users, DollarSign, Utensils, Wifi } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Checkbox } from "../components/ui/checkbox";
+import { amenityOptions } from "../data/mockData";
+import { DishSelector } from "../components/DishSelector";
+import { SearchCriteria } from "../types";
+import { toast } from "sonner";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -18,18 +19,28 @@ export default function Home() {
 
   const handleAmenityToggle = (amenity: string) => {
     setSelectedAmenities((prev) =>
-      prev.includes(amenity) ? prev.filter((a) => a !== amenity) : [...prev, amenity]
+      prev.includes(amenity)
+        ? prev.filter((a) => a !== amenity)
+        : [...prev, amenity],
     );
   };
 
   const handleSearch = () => {
+    if (numberOfPeople === 0) {
+      toast.warning("Số người cần có ít nhất 1 người!");
+      return;
+    }
+    if (budget === 0) {
+      toast.warning("Ngân sách cần lớn hơn 0!");
+      return;
+    }
     const criteria: SearchCriteria = {
       numberOfPeople,
       budget,
       preferredDishes: selectedDishes,
       amenities: selectedAmenities,
     };
-    navigate('/results', { state: { criteria } });
+    navigate("/results", { state: { criteria } });
   };
 
   return (
@@ -110,9 +121,7 @@ export default function Home() {
                     handleAmenityToggle(amenity);
                   }}
                 >
-                  <Checkbox
-                    checked={selectedAmenities.includes(amenity)}
-                  />
+                  <Checkbox checked={selectedAmenities.includes(amenity)} />
                   <label className="cursor-pointer flex-1">{amenity}</label>
                 </div>
               ))}
@@ -132,9 +141,7 @@ export default function Home() {
 
         {/* Info Section */}
         <div className="mt-8 bg-white/70 rounded-xl p-6">
-          <h3 className="text-lg mb-3 text-gray-800">
-            Cách thức hoạt động
-          </h3>
+          <h3 className="text-lg mb-3 text-gray-800">Cách thức hoạt động</h3>
           <ul className="space-y-2 text-gray-600">
             <li className="flex items-start gap-2">
               <span className="text-orange-500 mt-1">✓</span>
@@ -142,12 +149,15 @@ export default function Home() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-orange-500 mt-1">✓</span>
-              <span>Hệ thống tự động tính toán độ phù hợp cho từng nhà hàng</span>
+              <span>
+                Hệ thống tự động tính toán độ phù hợp cho từng nhà hàng
+              </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-orange-500 mt-1">✓</span>
               <span>
-                Xem danh sách nhà hàng được sắp xếp theo độ phù hợp kèm giải thích chi tiết
+                Xem danh sách nhà hàng được sắp xếp theo độ phù hợp kèm giải
+                thích chi tiết
               </span>
             </li>
             <li className="flex items-start gap-2">
