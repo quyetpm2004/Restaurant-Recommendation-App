@@ -44,3 +44,5 @@ npm install
 # Chạy development server
 npm run dev
 
+link demo: https://restaurant-recommendation-app-rust.vercel.app/
+
