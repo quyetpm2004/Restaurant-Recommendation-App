@@ -458,7 +458,7 @@ export default function RestaurantDetail() {
                   {filteredMenuItems.map((item) => (
                     <Card
                       key={item.id}
-                      className="flex-shrink-0 w-56 h-80 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer relative"
+                      className="flex-shrink-0 w-56 h-96 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer relative"
                     >
                       <div className="h-56 relative">
                         <img
