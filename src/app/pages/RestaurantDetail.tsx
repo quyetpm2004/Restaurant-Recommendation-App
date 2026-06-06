@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useParams, useNavigate, useLocation } from "react-router";
+import { useState, useMemo } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router'
 import {
   ArrowLeft,
   MapPin,
@@ -14,21 +14,21 @@ import {
   AlertTriangle,
   CheckCircle2,
   ChefHat,
-} from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Card } from "../components/ui/card";
-import { Label } from "../components/ui/label";
-import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Checkbox } from "../components/ui/checkbox";
-import { mockRestaurants } from "../data/mockData";
-import { analyzeTrends } from "../utils/trendAnalyzer";
-import { filterBySimilarUsers } from "../utils/similarUserFilter";
+} from 'lucide-react'
+import { Button } from '../components/ui/button'
+import { Badge } from '../components/ui/badge'
+import { Card } from '../components/ui/card'
+import { Label } from '../components/ui/label'
+import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group'
+import { Alert, AlertDescription } from '../components/ui/alert'
+import { Checkbox } from '../components/ui/checkbox'
+import { mockRestaurants } from '../data/mockData2'
+import { analyzeTrends } from '../utils/trendAnalyzer'
+import { filterBySimilarUsers } from '../utils/similarUserFilter'
 import {
   loadUserExperiences,
   saveUserExperiences,
-} from "../utils/experienceStorage";
+} from '../utils/experienceStorage'
 import {
   BarChart,
   Bar,
@@ -38,82 +38,82 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-} from "recharts";
-import { toast } from "sonner";
-import { Experience, SearchCriteria, MenuCategory } from "../types";
+} from 'recharts'
+import { toast } from 'sonner'
+import { Experience, SearchCriteria, MenuCategory } from '../types'
 
 export default function RestaurantDetail() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const restaurant = mockRestaurants.find((r) => r.id === id);
+  const restaurant = mockRestaurants.find((r) => r.id === id)
   const userCriteria =
-    (location.state as { criteria?: SearchCriteria })?.criteria || null;
+    (location.state as { criteria?: SearchCriteria })?.criteria || null
 
-  const [visitTime, setVisitTime] = useState("");
-  const [crowdLevel, setCrowdLevel] = useState("");
-  const [waitTime, setWaitTime] = useState("");
-  const [priceAccuracy, setPriceAccuracy] = useState("");
-  const [amenityMatch, setAmenityMatch] = useState("");
+  const [visitTime, setVisitTime] = useState('')
+  const [crowdLevel, setCrowdLevel] = useState('')
+  const [waitTime, setWaitTime] = useState('')
+  const [priceAccuracy, setPriceAccuracy] = useState('')
+  const [amenityMatch, setAmenityMatch] = useState('')
 
   const [userExperiences, setUserExperiences] = useState<Experience[]>(() =>
     id ? loadUserExperiences(id) : [],
-  );
+  )
 
   // Menu filter state
   const [selectedCategories, setSelectedCategories] = useState<MenuCategory[]>([
-    "food",
-    "drink",
-    "extra",
-    "dessert",
-  ]);
+    'food',
+    'drink',
+    'extra',
+    'dessert',
+  ])
 
   if (!restaurant) {
-    navigate("/");
-    return null;
+    navigate('/')
+    return null
   }
 
   const experiences = useMemo(
     () => [...restaurant.experiences, ...userExperiences],
     [restaurant.experiences, userExperiences],
-  );
+  )
 
   const filteredExperiences = useMemo(
     () => filterBySimilarUsers(experiences, userCriteria),
     [experiences, userCriteria],
-  );
+  )
 
-  const allTrends = useMemo(() => analyzeTrends(experiences), [experiences]);
+  const allTrends = useMemo(() => analyzeTrends(experiences), [experiences])
 
   const trends = useMemo(() => {
     if (filteredExperiences.length > 0) {
-      return analyzeTrends(filteredExperiences);
+      return analyzeTrends(filteredExperiences)
     }
-    return allTrends;
-  }, [filteredExperiences, allTrends]);
+    return allTrends
+  }, [filteredExperiences, allTrends])
 
   // Filter menu items by selected categories
   const filteredMenuItems = useMemo(() => {
     return restaurant.menu.filter((item) =>
       selectedCategories.includes(item.category),
-    );
-  }, [restaurant.menu, selectedCategories]);
+    )
+  }, [restaurant.menu, selectedCategories])
 
   const handleCategoryToggle = (category: MenuCategory) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
         : [...prev, category],
-    );
-  };
+    )
+  }
 
   const categoryLabels: Record<MenuCategory, string> = {
-    food: "Đồ ăn",
-    drink: "Đồ uống",
-    extra: "Đồ thêm",
-    dessert: "Tráng miệng",
-  };
+    food: 'Đồ ăn',
+    drink: 'Đồ uống',
+    extra: 'Đồ thêm',
+    dessert: 'Tráng miệng',
+  }
 
   const handleSubmitExperience = () => {
     if (
@@ -123,179 +123,179 @@ export default function RestaurantDetail() {
       !priceAccuracy ||
       !amenityMatch
     ) {
-      toast.error("Vui lòng điền đầy đủ thông tin trải nghiệm");
-      return;
+      toast.error('Vui lòng điền đầy đủ thông tin trải nghiệm')
+      return
     }
 
     const newExperience: Experience = {
       id: crypto.randomUUID(),
       restaurantId: restaurant.id,
       visitTime,
-      crowdLevel: crowdLevel as Experience["crowdLevel"],
-      waitTime: waitTime as Experience["waitTime"],
-      priceAccuracy: priceAccuracy as Experience["priceAccuracy"],
-      amenityMatch: amenityMatch as Experience["amenityMatch"],
+      crowdLevel: crowdLevel as Experience['crowdLevel'],
+      waitTime: waitTime as Experience['waitTime'],
+      priceAccuracy: priceAccuracy as Experience['priceAccuracy'],
+      amenityMatch: amenityMatch as Experience['amenityMatch'],
       date: new Date().toISOString().slice(0, 10),
       userContext: {
         budget: userCriteria?.budget ?? restaurant.priceRange,
         numberOfPeople: userCriteria?.numberOfPeople ?? 2,
         amenities: userCriteria?.amenities ?? [],
       },
-    };
+    }
 
     setUserExperiences((prev) => {
-      const next = [...prev, newExperience];
-      saveUserExperiences(restaurant.id, next);
-      return next;
-    });
+      const next = [...prev, newExperience]
+      saveUserExperiences(restaurant.id, next)
+      return next
+    })
 
-    toast.success("Cảm ơn bạn đã chia sẻ trải nghiệm!");
+    toast.success('Cảm ơn bạn đã chia sẻ trải nghiệm!')
 
-    setVisitTime("");
-    setCrowdLevel("");
-    setWaitTime("");
-    setPriceAccuracy("");
-    setAmenityMatch("");
-  };
+    setVisitTime('')
+    setCrowdLevel('')
+    setWaitTime('')
+    setPriceAccuracy('')
+    setAmenityMatch('')
+  }
 
   // Prepare chart data
   const crowdChartData = [
     {
-      name: "Vắng",
+      name: 'Vắng',
       value: trends.crowdDistribution.empty,
-      color: "#22c55e",
+      color: '#22c55e',
       percentage: (
         (trends.crowdDistribution.empty / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Bình thường",
+      name: 'Bình thường',
       value: trends.crowdDistribution.normal,
-      color: "#3b82f6",
+      color: '#3b82f6',
       percentage: (
         (trends.crowdDistribution.normal / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Đông",
+      name: 'Đông',
       value: trends.crowdDistribution.crowded,
-      color: "#f59e0b",
+      color: '#f59e0b',
       percentage: (
         (trends.crowdDistribution.crowded / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Rất đông",
+      name: 'Rất đông',
       value: trends.crowdDistribution.very_crowded,
-      color: "#ef4444",
+      color: '#ef4444',
       percentage: (
         (trends.crowdDistribution.very_crowded / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
-  ];
+  ]
 
   const waitTimeChartData = [
     {
-      name: "Không có",
+      name: 'Không có',
       value: trends.waitTimeDistribution.none,
-      color: "#10b981",
+      color: '#10b981',
       percentage: (
         (trends.waitTimeDistribution.none / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Ngắn",
+      name: 'Ngắn',
       value: trends.waitTimeDistribution.short,
-      color: "#22c55e",
+      color: '#22c55e',
       percentage: (
         (trends.waitTimeDistribution.short / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Bình thường",
+      name: 'Bình thường',
       value: trends.waitTimeDistribution.normal,
-      color: "#3b82f6",
+      color: '#3b82f6',
       percentage: (
         (trends.waitTimeDistribution.normal / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Dài",
+      name: 'Dài',
       value: trends.waitTimeDistribution.long,
-      color: "#ef4444",
+      color: '#ef4444',
       percentage: (
         (trends.waitTimeDistribution.long / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
-  ];
+  ]
 
   const priceChartData = [
     {
-      name: "Rẻ hơn",
+      name: 'Rẻ hơn',
       value: trends.priceDistribution.cheaper,
-      color: "#10b981",
+      color: '#10b981',
       percentage: (
         (trends.priceDistribution.cheaper / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Chính xác",
+      name: 'Chính xác',
       value: trends.priceDistribution.accurate,
-      color: "#22c55e",
+      color: '#22c55e',
       percentage: (
         (trends.priceDistribution.accurate / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Hơi cao",
+      name: 'Hơi cao',
       value: trends.priceDistribution.slightly_higher,
-      color: "#f59e0b",
+      color: '#f59e0b',
       percentage: (
         (trends.priceDistribution.slightly_higher / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Cao hơn nhiều",
+      name: 'Cao hơn nhiều',
       value: trends.priceDistribution.much_higher,
-      color: "#ef4444",
+      color: '#ef4444',
       percentage: (
         (trends.priceDistribution.much_higher / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
-  ];
+  ]
 
   const amenityChartData = [
     {
-      name: "Đúng kỳ vọng",
+      name: 'Đúng kỳ vọng',
       value: trends.amenityDistribution.matched,
-      color: "#22c55e",
+      color: '#22c55e',
       percentage: (
         (trends.amenityDistribution.matched / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
     {
-      name: "Khác kỳ vọng",
+      name: 'Khác kỳ vọng',
       value: trends.amenityDistribution.not_matched,
-      color: "#ef4444",
+      color: '#ef4444',
       percentage: (
         (trends.amenityDistribution.not_matched / trends.totalExperiences) *
         100
       ).toFixed(0),
     },
-  ];
+  ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -305,8 +305,7 @@ export default function RestaurantDetail() {
           type="button"
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6 hover:bg-white/50"
-        >
+          className="mb-6 hover:bg-white/50">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Quay lại kết quả
         </Button>
@@ -384,8 +383,7 @@ export default function RestaurantDetail() {
                   <Badge
                     key={dish}
                     variant="secondary"
-                    className="text-base py-2 px-4"
-                  >
+                    className="text-base py-2 px-4">
                     {dish}
                   </Badge>
                 ))}
@@ -400,8 +398,7 @@ export default function RestaurantDetail() {
                   <Badge
                     key={amenity}
                     variant="secondary"
-                    className="text-base py-2 px-4 bg-green-100 text-green-800"
-                  >
+                    className="text-base py-2 px-4 bg-green-100 text-green-800">
                     ✓ {amenity}
                   </Badge>
                 ))}
@@ -432,14 +429,13 @@ export default function RestaurantDetail() {
                     key={category}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg border-2 cursor-pointer transition-colors ${
                       selectedCategories.includes(category)
-                        ? "border-orange-500 bg-orange-50"
-                        : "border-gray-200 hover:border-gray-300 bg-white"
+                        ? 'border-orange-500 bg-orange-50'
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
                     }`}
                     onClick={(e) => {
-                      e.preventDefault();
-                      handleCategoryToggle(category);
-                    }}
-                  >
+                      e.preventDefault()
+                      handleCategoryToggle(category)
+                    }}>
                     <Checkbox checked={selectedCategories.includes(category)} />
                     <label className="cursor-pointer">
                       {categoryLabels[category]}
@@ -454,12 +450,11 @@ export default function RestaurantDetail() {
           <div className="relative">
             {filteredMenuItems.length > 0 ? (
               <div className="overflow-x-auto pb-4 -mx-4 px-4">
-                <div className="flex gap-4" style={{ width: "max-content" }}>
+                <div className="flex gap-4" style={{ width: 'max-content' }}>
                   {filteredMenuItems.map((item) => (
                     <Card
                       key={item.id}
-                      className="flex-shrink-0 w-56 h-96 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer relative"
-                    >
+                      className="flex-shrink-0 w-56 h-96 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer relative">
                       <div className="h-56 relative">
                         <img
                           src={item.imageUrl}
@@ -522,8 +517,7 @@ export default function RestaurantDetail() {
                   có hoàn cảnh tương tự bạn
                   <Badge
                     variant="secondary"
-                    className="ml-2 bg-blue-100 text-blue-800"
-                  >
+                    className="ml-2 bg-blue-100 text-blue-800">
                     Cá nhân hóa
                   </Badge>
                 </p>
@@ -674,9 +668,9 @@ export default function RestaurantDetail() {
                               {payload[0].payload.percentage}%
                             </p>
                           </div>
-                        );
+                        )
                       }
-                      return null;
+                      return null
                     }}
                   />
                   <Bar dataKey="value" radius={[8, 8, 0, 0]}>
@@ -705,9 +699,9 @@ export default function RestaurantDetail() {
                               {payload[0].payload.percentage}%
                             </p>
                           </div>
-                        );
+                        )
                       }
-                      return null;
+                      return null
                     }}
                   />
                   <Bar dataKey="value" radius={[8, 8, 0, 0]}>
@@ -738,9 +732,9 @@ export default function RestaurantDetail() {
                               {payload[0].payload.percentage}%
                             </p>
                           </div>
-                        );
+                        )
                       }
-                      return null;
+                      return null
                     }}
                   />
                   <Bar dataKey="value" radius={[8, 8, 0, 0]}>
@@ -771,9 +765,9 @@ export default function RestaurantDetail() {
                               {payload[0].payload.percentage}%
                             </p>
                           </div>
-                        );
+                        )
                       }
-                      return null;
+                      return null
                     }}
                   />
                   <Bar dataKey="value" radius={[8, 8, 0, 0]}>
@@ -810,26 +804,24 @@ export default function RestaurantDetail() {
               <RadioGroup value={visitTime} onValueChange={setVisitTime}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    "10:00-12:00",
-                    "12:00-14:00",
-                    "14:00-18:00",
-                    "18:00-20:00",
-                    "20:00-22:00",
+                    '10:00-12:00',
+                    '12:00-14:00',
+                    '14:00-18:00',
+                    '18:00-20:00',
+                    '20:00-22:00',
                   ].map((time) => (
                     <div
                       key={time}
                       className={`flex items-center space-x-2 p-3 rounded-lg border-2 cursor-pointer ${
                         visitTime === time
-                          ? "border-orange-500 bg-orange-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={() => setVisitTime(time)}
-                    >
+                      onClick={() => setVisitTime(time)}>
                       <RadioGroupItem value={time} id={`time-${time}`} />
                       <label
                         htmlFor={`time-${time}`}
-                        className="cursor-pointer flex-1"
-                      >
+                        className="cursor-pointer flex-1">
                         {time}
                       </label>
                     </div>
@@ -846,28 +838,26 @@ export default function RestaurantDetail() {
               <RadioGroup value={crowdLevel} onValueChange={setCrowdLevel}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { value: "empty", label: "Vắng" },
-                    { value: "normal", label: "Bình thường" },
-                    { value: "crowded", label: "Đông" },
-                    { value: "very_crowded", label: "Rất đông" },
+                    { value: 'empty', label: 'Vắng' },
+                    { value: 'normal', label: 'Bình thường' },
+                    { value: 'crowded', label: 'Đông' },
+                    { value: 'very_crowded', label: 'Rất đông' },
                   ].map((option) => (
                     <div
                       key={option.value}
                       className={`flex items-center space-x-2 p-3 rounded-lg border-2 cursor-pointer ${
                         crowdLevel === option.value
-                          ? "border-orange-500 bg-orange-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={() => setCrowdLevel(option.value)}
-                    >
+                      onClick={() => setCrowdLevel(option.value)}>
                       <RadioGroupItem
                         value={option.value}
                         id={`crowd-${option.value}`}
                       />
                       <label
                         htmlFor={`crowd-${option.value}`}
-                        className="cursor-pointer flex-1"
-                      >
+                        className="cursor-pointer flex-1">
                         {option.label}
                       </label>
                     </div>
@@ -882,28 +872,26 @@ export default function RestaurantDetail() {
               <RadioGroup value={waitTime} onValueChange={setWaitTime}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { value: "none", label: "Không có" },
-                    { value: "short", label: "Ngắn (< 10 phút)" },
-                    { value: "normal", label: "Bình thường (10-20 phút)" },
-                    { value: "long", label: "Dài (> 20 phút)" },
+                    { value: 'none', label: 'Không có' },
+                    { value: 'short', label: 'Ngắn (< 10 phút)' },
+                    { value: 'normal', label: 'Bình thường (10-20 phút)' },
+                    { value: 'long', label: 'Dài (> 20 phút)' },
                   ].map((option) => (
                     <div
                       key={option.value}
                       className={`flex items-center space-x-2 p-3 rounded-lg border-2 cursor-pointer ${
                         waitTime === option.value
-                          ? "border-orange-500 bg-orange-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={() => setWaitTime(option.value)}
-                    >
+                      onClick={() => setWaitTime(option.value)}>
                       <RadioGroupItem
                         value={option.value}
                         id={`wait-${option.value}`}
                       />
                       <label
                         htmlFor={`wait-${option.value}`}
-                        className="cursor-pointer flex-1"
-                      >
+                        className="cursor-pointer flex-1">
                         {option.label}
                       </label>
                     </div>
@@ -919,32 +907,29 @@ export default function RestaurantDetail() {
               </Label>
               <RadioGroup
                 value={priceAccuracy}
-                onValueChange={setPriceAccuracy}
-              >
+                onValueChange={setPriceAccuracy}>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { value: "cheaper", label: "Rẻ hơn dự kiến" },
-                    { value: "accurate", label: "Đúng như dự kiến" },
-                    { value: "slightly_higher", label: "Hơi cao hơn" },
-                    { value: "much_higher", label: "Cao hơn nhiều" },
+                    { value: 'cheaper', label: 'Rẻ hơn dự kiến' },
+                    { value: 'accurate', label: 'Đúng như dự kiến' },
+                    { value: 'slightly_higher', label: 'Hơi cao hơn' },
+                    { value: 'much_higher', label: 'Cao hơn nhiều' },
                   ].map((option) => (
                     <div
                       key={option.value}
                       className={`flex items-center space-x-2 p-3 rounded-lg border-2 cursor-pointer ${
                         priceAccuracy === option.value
-                          ? "border-orange-500 bg-orange-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={() => setPriceAccuracy(option.value)}
-                    >
+                      onClick={() => setPriceAccuracy(option.value)}>
                       <RadioGroupItem
                         value={option.value}
                         id={`price-${option.value}`}
                       />
                       <label
                         htmlFor={`price-${option.value}`}
-                        className="cursor-pointer flex-1"
-                      >
+                        className="cursor-pointer flex-1">
                         {option.label}
                       </label>
                     </div>
@@ -961,26 +946,24 @@ export default function RestaurantDetail() {
               <RadioGroup value={amenityMatch} onValueChange={setAmenityMatch}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {[
-                    { value: "matched", label: "Đúng như kỳ vọng" },
-                    { value: "not_matched", label: "Khác với kỳ vọng" },
+                    { value: 'matched', label: 'Đúng như kỳ vọng' },
+                    { value: 'not_matched', label: 'Khác với kỳ vọng' },
                   ].map((option) => (
                     <div
                       key={option.value}
                       className={`flex items-center space-x-2 p-3 rounded-lg border-2 cursor-pointer ${
                         amenityMatch === option.value
-                          ? "border-orange-500 bg-orange-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? 'border-orange-500 bg-orange-50'
+                          : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={() => setAmenityMatch(option.value)}
-                    >
+                      onClick={() => setAmenityMatch(option.value)}>
                       <RadioGroupItem
                         value={option.value}
                         id={`amenity-${option.value}`}
                       />
                       <label
                         htmlFor={`amenity-${option.value}`}
-                        className="cursor-pointer flex-1"
-                      >
+                        className="cursor-pointer flex-1">
                         {option.label}
                       </label>
                     </div>
@@ -993,8 +976,7 @@ export default function RestaurantDetail() {
             <Button
               type="button"
               onClick={handleSubmitExperience}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white text-lg py-6"
-            >
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white text-lg py-6">
               Gửi trải nghiệm
             </Button>
           </div>
@@ -1021,5 +1003,5 @@ export default function RestaurantDetail() {
         </div>
       </div>
     </div>
-  );
+  )
 }

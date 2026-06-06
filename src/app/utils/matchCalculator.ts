@@ -7,6 +7,33 @@ const WEIGHTS = {
   amenities: 0.15,
 } as const;
 
+function isExcludedByMandatory(
+  criteria: SearchCriteria,
+  match: MatchScore
+): boolean {
+  const mandatory = criteria.mandatory;
+  if (!mandatory) return false;
+
+  if (mandatory.budget && !match.reasons.budgetMatch) return true;
+  if (mandatory.capacity && !match.reasons.capacityMatch) return true;
+  if (
+    mandatory.dishes &&
+    criteria.preferredDishes.length > 0 &&
+    match.reasons.dishesMatch.length === 0
+  ) {
+    return true;
+  }
+  if (
+    mandatory.amenities &&
+    criteria.amenities.length > 0 &&
+    match.reasons.amenitiesMatch.length === 0
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 export function calculateMatchScore(
   restaurant: Restaurant,
   criteria: SearchCriteria
@@ -102,8 +129,8 @@ export function rankRestaurants(
   restaurants: Restaurant[],
   criteria: SearchCriteria
 ): MatchScore[] {
-  const scores = restaurants.map((restaurant) =>
-    calculateMatchScore(restaurant, criteria)
-  );
+  const scores = restaurants
+    .map((restaurant) => calculateMatchScore(restaurant, criteria))
+    .filter((score) => !isExcludedByMandatory(criteria, score));
   return scores.sort((a, b) => b.score - a.score);
 }

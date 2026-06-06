@@ -1,10 +1,18 @@
 // Types for the restaurant app
 
+export interface SearchCriteriaMandatory {
+  budget: boolean;
+  capacity: boolean;
+  dishes: boolean;
+  amenities: boolean;
+}
+
 export interface SearchCriteria {
   numberOfPeople: number;
   budget: number;
   preferredDishes: string[];
   amenities: string[];
+  mandatory: SearchCriteriaMandatory;
 }
 
 export type MenuCategory = 'food' | 'drink' | 'extra' | 'dessert';
