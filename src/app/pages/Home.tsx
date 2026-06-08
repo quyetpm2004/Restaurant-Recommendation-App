@@ -39,7 +39,7 @@ export default function Home() {
       setMandatory((prev) => ({ ...prev, dishes: false }))
 
     if (numberOfPeople < 1 || isNaN(numberOfPeople))
-      setMandatory((prev) => ({ ...prev, numberOfPeople: false }))
+      setMandatory((prev) => ({ ...prev, capacity: false }))
 
     if (budget < 1 || isNaN(budget))
       setMandatory((prev) => ({ ...prev, budget: false }))
@@ -120,6 +120,7 @@ export default function Home() {
                 <Checkbox
                   className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                   checked={mandatory.capacity}
+                  disabled={numberOfPeople < 1 || isNaN(numberOfPeople)}
                   onCheckedChange={() => toggleMandatory('capacity')}
                 />
                 <span>Bắt buộc</span>
@@ -147,6 +148,7 @@ export default function Home() {
                 <Checkbox
                   className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                   checked={mandatory.budget}
+                  disabled={budget < 1 || isNaN(budget)}
                   onCheckedChange={() => toggleMandatory('budget')}
                 />
                 <span>Bắt buộc</span>
