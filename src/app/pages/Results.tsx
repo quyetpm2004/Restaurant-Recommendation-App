@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, Link } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 import { ArrowLeft, MapPin, Users, Star, TrendingUp } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Progress } from '../components/ui/progress'
@@ -11,7 +11,6 @@ import { loadSearchCriteriaDraft } from '../utils/searchCriteriaStorage'
 import { useState } from 'react'
 
 export default function Results() {
-  const location = useLocation()
   const navigate = useNavigate()
   const [criteria] = useState<SearchCriteria>(loadSearchCriteriaDraft)
 
@@ -67,11 +66,11 @@ export default function Results() {
             <div className="flex flex-wrap gap-3 text-sm text-gray-600">
               <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
                 <Users className="w-4 h-4" />
-                <span>{criteria.numberOfPeople} người</span>
+                <span>{criteria.numberOfPeople || 0} người</span>
               </div>
               <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
                 <span>💰</span>
-                <span>{criteria.budget.toLocaleString()}đ/người</span>
+                <span>{criteria.budget.toLocaleString() || 0}đ/người</span>
               </div>
               {criteria.preferredDishes.length > 0 && (
                 <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">

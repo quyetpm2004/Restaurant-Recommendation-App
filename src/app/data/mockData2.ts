@@ -1025,18 +1025,29 @@ export const dishOptions = dishOptionGroups.reduce(
   [],
 )
 
-export function getAmenityOptions(restaurants: Restaurant[]): string[] {
-  const options: string[] = []
+/**
+ * @param restaurants - list of restaurants
+ * @param minCount - minimum count of restaurants that have the amenity
+ * @returns list of amenities
+ */
+export function getAmenityOptions(
+  restaurants: Restaurant[],
+  minCount = 2,
+): string[] {
+  const counts: Record<string, number> = {}
+  const order: string[] = []
 
   for (const restaurant of restaurants) {
     for (const amenity of restaurant.amenities) {
-      if (options.indexOf(amenity) === -1) {
-        options.push(amenity)
+      if (counts[amenity] === undefined) {
+        counts[amenity] = 0
+        order.push(amenity)
       }
+      counts[amenity] += 1
     }
   }
 
-  return options
+  return order.filter((amenity) => counts[amenity] >= minCount)
 }
 
-export const amenityOptions = getAmenityOptions(mockRestaurants)
+export const amenityOptions = getAmenityOptions(mockRestaurants, 2)
