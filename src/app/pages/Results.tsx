@@ -7,11 +7,13 @@ import { Card } from '../components/ui/card'
 import { SearchCriteria } from '../types'
 import { mockRestaurants } from '../data/mockData2'
 import { rankRestaurants } from '../utils/matchCalculator'
+import { loadSearchCriteriaDraft } from '../utils/searchCriteriaStorage'
+import { useState } from 'react'
 
 export default function Results() {
   const location = useLocation()
   const navigate = useNavigate()
-  const criteria = location.state?.criteria as SearchCriteria
+  const [criteria] = useState<SearchCriteria>(loadSearchCriteriaDraft)
 
   if (!criteria) {
     navigate('/')
