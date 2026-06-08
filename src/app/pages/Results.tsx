@@ -4,20 +4,13 @@ import { Button } from '../components/ui/button'
 import { Progress } from '../components/ui/progress'
 import { Badge } from '../components/ui/badge'
 import { Card } from '../components/ui/card'
-import { SearchCriteria } from '../types'
 import { mockRestaurants } from '../data/mockData2'
 import { rankRestaurants } from '../utils/matchCalculator'
 import { loadSearchCriteriaDraft } from '../utils/searchCriteriaStorage'
-import { useState } from 'react'
 
 export default function Results() {
   const navigate = useNavigate()
-  const [criteria] = useState<SearchCriteria>(loadSearchCriteriaDraft)
-
-  if (!criteria) {
-    navigate('/')
-    return null
-  }
+  const criteria = loadSearchCriteriaDraft()
 
   const rankedResults = rankRestaurants(mockRestaurants, criteria)
   const restaurantsWithScores = rankedResults.map((result) => ({

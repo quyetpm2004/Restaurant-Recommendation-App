@@ -32,18 +32,28 @@ export default function Home() {
   )
 
   useEffect(() => {
-    if (selectedAmenities.length === 0)
-      setMandatory((prev) => ({ ...prev, amenities: false }))
+    setMandatory((prev) => {
+      const next = {
+        budget: budget < 1 || isNaN(budget) ? false : prev.budget,
+        capacity:
+          numberOfPeople < 1 || isNaN(numberOfPeople) ? false : prev.capacity,
+        dishes: selectedDishes.length === 0 ? false : prev.dishes,
+        amenities: selectedAmenities.length === 0 ? false : prev.amenities,
+      }
 
-    if (selectedDishes.length === 0)
-      setMandatory((prev) => ({ ...prev, dishes: false }))
+      if (
+        next.budget === prev.budget &&
+        next.capacity === prev.capacity &&
+        next.dishes === prev.dishes &&
+        next.amenities === prev.amenities
+      )
+        return prev
 
-    if (numberOfPeople < 1 || isNaN(numberOfPeople))
-      setMandatory((prev) => ({ ...prev, capacity: false }))
+      return next
+    })
+  }, [numberOfPeople, budget, selectedDishes, selectedAmenities])
 
-    if (budget < 1 || isNaN(budget))
-      setMandatory((prev) => ({ ...prev, budget: false }))
-
+  useEffect(() => {
     saveSearchCriteriaDraft({
       numberOfPeople,
       budget,
@@ -88,7 +98,9 @@ export default function Home() {
         amenities: mandatory.amenities && selectedAmenities.length > 0,
       },
     }
-    navigate('/results', { state: { criteria } })
+
+    saveSearchCriteriaDraft(criteria)
+    navigate('/results')
   }
 
   return (
@@ -115,7 +127,11 @@ export default function Home() {
                 <span>Số lượng người</span>
               </Label>
               <label
-                className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer shrink-0"
+                className={`flex items-center gap-2 text-sm shrink-0 ${
+                  numberOfPeople < 1 || isNaN(numberOfPeople)
+                    ? 'text-gray-400'
+                    : 'text-gray-600 cursor-pointer'
+                }`}
                 onClick={(e) => e.stopPropagation()}>
                 <Checkbox
                   className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
@@ -143,7 +159,11 @@ export default function Home() {
                 <span>Ngân sách mỗi người (VNĐ)</span>
               </Label>
               <label
-                className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer shrink-0"
+                className={`flex items-center gap-2 text-sm shrink-0 ${
+                  budget < 1 || isNaN(budget)
+                    ? 'text-gray-400'
+                    : 'text-gray-600 cursor-pointer'
+                }`}
                 onClick={(e) => e.stopPropagation()}>
                 <Checkbox
                   className="data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
@@ -180,7 +200,7 @@ export default function Home() {
               <label
                 className={`flex items-center gap-2 text-sm shrink-0 ${
                   selectedDishes.length === 0
-                    ? 'text-gray-400 cursor-not-allowed'
+                    ? 'text-gray-400'
                     : 'text-gray-600 cursor-pointer'
                 }`}
                 onClick={(e) => e.stopPropagation()}>
@@ -209,7 +229,7 @@ export default function Home() {
               <label
                 className={`flex items-center gap-2 text-sm shrink-0 ${
                   selectedAmenities.length === 0
-                    ? 'text-gray-400 cursor-not-allowed'
+                    ? 'text-gray-400'
                     : 'text-gray-600 cursor-pointer'
                 }`}
                 onClick={(e) => e.stopPropagation()}>
