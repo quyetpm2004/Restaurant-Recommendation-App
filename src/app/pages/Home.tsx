@@ -32,6 +32,18 @@ export default function Home() {
   )
 
   useEffect(() => {
+    if (selectedAmenities.length === 0)
+      setMandatory((prev) => ({ ...prev, amenities: false }))
+
+    if (selectedDishes.length === 0)
+      setMandatory((prev) => ({ ...prev, dishes: false }))
+
+    if (numberOfPeople < 1 || isNaN(numberOfPeople))
+      setMandatory((prev) => ({ ...prev, numberOfPeople: false }))
+
+    if (budget < 1 || isNaN(budget))
+      setMandatory((prev) => ({ ...prev, budget: false }))
+
     saveSearchCriteriaDraft({
       numberOfPeople,
       budget,
@@ -143,7 +155,7 @@ export default function Home() {
             <Input
               type="number"
               min="0"
-              step="10000"
+              step="5000"
               value={budget}
               onChange={(e) => setBudget(parseInt(e.target.value))}
               className="text-lg p-6"
