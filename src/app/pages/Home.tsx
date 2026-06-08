@@ -54,14 +54,16 @@ export default function Home() {
   }
 
   const handleSearch = () => {
-    if (numberOfPeople === 0) {
+    if (numberOfPeople < 1 || isNaN(numberOfPeople)) {
       toast.warning('Số người cần có ít nhất 1 người!')
       return
     }
-    if (budget === 0) {
+
+    if (budget < 1 || isNaN(budget)) {
       toast.warning('Ngân sách cần lớn hơn 0!')
       return
     }
+
     const criteria: SearchCriteria = {
       numberOfPeople,
       budget,
