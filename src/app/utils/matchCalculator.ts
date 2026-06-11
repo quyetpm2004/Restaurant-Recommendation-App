@@ -7,31 +7,34 @@ const WEIGHTS = {
   amenities: 0.15,
 } as const;
 
-function isExcludedByMandatory(
+/** Quán phải thỏa mãn toàn bộ filter đang bật "bắt buộc". */
+function meetsAllMandatoryFilters(
   criteria: SearchCriteria,
   match: MatchScore
 ): boolean {
   const mandatory = criteria.mandatory;
-  if (!mandatory) return false;
+  if (!mandatory) return true;
 
-  if (mandatory.budget && !match.reasons.budgetMatch) return true;
-  if (mandatory.capacity && !match.reasons.capacityMatch) return true;
+  if (mandatory.budget && !match.reasons.budgetMatch) return false;
+  if (mandatory.capacity && !match.reasons.capacityMatch) return false;
+
   if (
     mandatory.dishes &&
     criteria.preferredDishes.length > 0 &&
-    match.reasons.dishesMatch.length === 0
+    match.reasons.dishesMatch.length !== criteria.preferredDishes.length
   ) {
-    return true;
+    return false;
   }
+
   if (
     mandatory.amenities &&
     criteria.amenities.length > 0 &&
-    match.reasons.amenitiesMatch.length === 0
+    match.reasons.amenitiesMatch.length !== criteria.amenities.length
   ) {
-    return true;
+    return false;
   }
 
-  return false;
+  return true;
 }
 
 export function calculateMatchScore(
@@ -131,6 +134,6 @@ export function rankRestaurants(
 ): MatchScore[] {
   const scores = restaurants
     .map((restaurant) => calculateMatchScore(restaurant, criteria))
-    .filter((score) => !isExcludedByMandatory(criteria, score));
+    .filter((score) => meetsAllMandatoryFilters(criteria, score));
   return scores.sort((a, b) => b.score - a.score);
 }

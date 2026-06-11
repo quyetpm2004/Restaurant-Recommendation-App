@@ -1,6 +1,8 @@
 import { Restaurant, Experience, MenuItem } from '../types'
 
-export const mockRestaurants: Restaurant[] = [
+import { buildMockRestaurants, SEED_CONFIG } from './mockDataSeed'
+
+const baseRestaurants: Restaurant[] = [
   {
     id: 'ChIJmb5ht3ytNTERuHi6wJRiT-4',
     name: 'Quán Ăn Quý Mỳ Ý Và Đồ Ăn Vặt',
@@ -898,13 +900,9 @@ export const mockRestaurants: Restaurant[] = [
   },
 ]
 
-export interface DishOptionGroup {
-  id: string
-  label: string
-  dishes: string[]
-}
+export type { DishOptionGroup } from './mockDataSeed'
 
-export const dishOptionGroups: DishOptionGroup[] = [
+export const dishOptionGroups: import('./mockDataSeed').DishOptionGroup[] = [
   {
     id: 'pho-bun',
     label: 'Phở & bún',
@@ -1023,6 +1021,12 @@ export const dishOptionGroups: DishOptionGroup[] = [
 export const dishOptions = dishOptionGroups.reduce(
   (acc, group) => [...acc, ...group.dishes],
   [],
+)
+
+export const mockRestaurants = buildMockRestaurants(
+  baseRestaurants,
+  dishOptionGroups,
+  SEED_CONFIG,
 )
 
 /**
