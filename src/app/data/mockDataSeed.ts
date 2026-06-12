@@ -8,9 +8,9 @@ export interface DishOptionGroup {
 /** Chỉnh số lượng data tại đây */
 export const SEED_CONFIG = {
   /** Số quán sinh thêm từ template (ngoài baseRestaurants) */
-  extraRestaurantCount: 30,
+  extraRestaurantCount: 50,
   /** Mỗi quán có ít nhất bấy nhiêu món trong menu */
-  minMenuItemsPerRestaurant: 5,
+  minMenuItemsPerRestaurant: 10,
   /** Thêm đồ uống / món phụ vào menu */
   addDrinkAndExtraItems: true,
   /** Số experience mỗi quán sinh thêm */
