@@ -11,8 +11,8 @@ const DEFAULT_MANDATORY = {
 }
 
 const DEFAULT: SearchCriteria = {
-  numberOfPeople: 4,
-  budget: 50000,
+  numberOfPeople: undefined,
+  budget: undefined,
   preferredDishes: [],
   amenities: [],
   mandatory: { ...DEFAULT_MANDATORY },
